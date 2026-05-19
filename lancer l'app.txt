@@ -1,0 +1,163 @@
+Pour une app avec React Native sur Windows, les commandes dépendent surtout de :
+
+React Native CLI classique
+ou Expo
+1. Vérifier que tout est installé
+
+Tu dois généralement avoir :
+
+Node.js
+Android Studio
+Android SDK
+Java JDK
+2. Aller dans le dossier du projet
+
+Dans PowerShell ou CMD :
+
+cd MonProjet
+3. Installer les dépendances
+npm install
+
+ou :
+
+yarn
+4. Lancer Metro Bundler
+
+Metro est le serveur JS de React Native.
+
+npx react-native start
+
+Tu peux le laisser ouvert dans un terminal.
+
+5. Run l’application Android
+
+Dans un autre terminal :
+
+npx react-native run-android
+
+Cette commande :
+
+build l’app
+installe l’APK
+lance l’app sur émulateur/téléphone
+6. Build APK debug uniquement
+
+Si tu veux juste compiler :
+
+cd android
+gradlew assembleDebug
+
+Sous Windows :
+
+gradlew.bat assembleDebug
+
+L’APK sera souvent ici :
+
+android/app/build/outputs/apk/debug/app-debug.apk
+7. Build APK release
+
+Version production :
+
+cd android
+gradlew.bat assembleRelease
+
+APK généré :
+
+android/app/build/outputs/apk/release/app-release.apk
+8. Build App Bundle (.aab)
+
+Pour publier sur Google Play :
+
+gradlew.bat bundleRelease
+
+Fichier généré :
+
+android/app/build/outputs/bundle/release/app-release.aab
+9. Si tu utilises Expo
+
+Pour lancer :
+
+npx expo start
+
+Puis :
+
+Android emulator
+QR code
+Expo Go
+
+Build APK/AAB avec Expo moderne :
+
+npx eas build -p android
+
+Avec Expo EAS Build.
+
+10. Nettoyer le build
+
+Quand il y a des erreurs :
+
+cd android
+gradlew clean
+
+Puis :
+
+npx react-native run-android
+11. Vérifier appareils connectés
+
+Commande utile :
+
+adb devices
+
+ADB vient du SDK Android.
+
+12. Commandes les plus importantes à retenir
+Lancer l’app
+npx react-native run-android
+Démarrer Metro
+npx react-native start
+Build release
+gradlew.bat assembleRelease
+Nettoyer
+gradlew clean
+13. Pipeline React Native Android
+JavaScript/TypeScript
+        ↓
+Metro Bundler
+        ↓
+Bridge React Native
+        ↓
+Gradle Build
+        ↓
+APK/AAB
+        ↓
+Installation Android
+14. Erreurs fréquentes sous Windows
+“SDK location not found”
+
+Configurer :
+
+ANDROID_HOME
+“adb not recognized”
+
+Ajouter :
+
+platform-tools
+
+au PATH Windows.
+
+“No connected devices”
+lancer un émulateur
+activer USB Debugging
+vérifier adb devices
+“Gradle build failed”
+
+Souvent :
+
+cd android
+gradlew clean
+15. React Native CLI vs Expo
+Type	Commande Run
+React Native CLI	npx react-native run-android
+Expo	npx expo start
+
+Expo est plus simple au début.
+React Native CLI donne plus de contrôle natif Android/iOS.
