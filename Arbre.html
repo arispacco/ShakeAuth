@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Arbre Généalogique de la Famille</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        /* Conteneur de l'arbre */
+        .tree-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .tree {
+            display: table;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .tree ul {
+            padding-top: 20px; 
+            position: relative;
+            transition: all 0.5s;
+            display: table-row;
+        }
+
+        .tree li {
+            display: table-cell;
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 10px 0 10px;
+            transition: all 0.5s;
+            vertical-align: top;
+        }
+
+        /* Lignes de connexion horizontales et verticales */
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute; 
+            top: 0; 
+            right: 50%;
+            border-top: 2px solid #bdc3c7;
+            width: 50%; 
+            height: 20px;
+        }
+        .tree li::after {
+            right: auto; 
+            left: 50%;
+            border-left: 2px solid #bdc3c7;
+        }
+
+        /* Enlever les connecteurs pour les éléments uniques, premiers et derniers */
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+        .tree li:only-child { 
+            padding-top: 0;
+        }
+        .tree li:first-child::before, .tree li:last-child::after {
+            border: 0 none;
+        }
+        .tree li:last-child::before {
+            border-right: 2px solid #bdc3c7;
+            border-radius: 0 5px 0 0;
+        }
+        .tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+
+        /* Ligne verticale descendant d'un parent */
+        .tree ul ul::before {
+            content: '';
+            position: absolute; 
+            top: 0; 
+            left: 50%;
+            border-left: 2px solid #bdc3c7;
+            width: 0; 
+            height: 20px;
+        }
+
+        /* Bloc Couple / Individu */
+        .couple-box {
+            display: inline-flex;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px dashed #b2bec3;
+            position: relative;
+        }
+
+        .member {
+            background: #fff;
+            border: 2px solid #cbd5e1;
+            padding: 12px 15px;
+            border-radius: 6px;
+            min-width: 160px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .member:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Couleurs par genre / branche */
+        .homme {
+            border-left: 5px solid #3498db;
+            background-left: #f2f8fc;
+        }
+        .femme {
+            border-left: 5px solid #e74c3c;
+            background-left: #fdf3f2;
+        }
+        .inconnu {
+            border-left: 5px solid #95a5a6;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .role {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #7f8c8d;
+            margin-bottom: 4px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .inconnu .name {
+            color: #95a5a6;
+        }
+
+        /* Légende */
+        .legend {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Arbre Généalogique Familial</h1>
+    <p class="subtitle">Représentation visuelle de la lignée ascendante et de la descendance</p>
+
+    <div class="tree-container">
+        <div class="tree">
+            <ul>
+                <!-- ÉTAGE 1 : ARRIÈRE-GRANDS-PARENTS -->
+                <li>
+                    <div style="display: flex; gap: 40px; justify-content: center;">
+                        <!-- Branche Paternelle du Grand-Père Paternel -->
+                        <div class="couple-box">
+                            <div class="member homme">
+                                <div class="role">Arrière-Grand-Père Pat.</div>
+                                <div class="name">Ta'a Afondiga</div>
+                            </div>
+                            <div class="member femme">
+                                <div class="role">Arrière-Grand-Mère Pat.</div>
+                                <div class="name">Ma'a Pagui</div>
+                            </div>
+                        </div>
+
+                        <!-- Branche Maternelle du Grand-Père Paternel / de la Grand-Mère Maternelle (Inconnus) -->
+                        <div class="couple-box">
+                            <div class="member homme inconnu">
+                                <div class="role">Arrière-Grand-Père</div>
+                                <div class="name">Nom Inconnu</div>
+                            </div>
+                            <div class="member femme inconnu">
+                                <div class="role">Arrière-Grand-Mère</div>
+                                <div class="name">Nom Inconnu</div>
+                            </div>
+                        </div>
+
+                        <!-- Lignée Demeze Fomekeu & Ashley (Côté Maternel / Grand-père Bernard) -->
+                        <div class="couple-box">
+                            <div class="member homme">
+                                <div class="role">Arrière-Grand-Père Pat. Mère</div>
+                                <div class="name">Demeze Fomekeu</div>
+                            </div>
+                            <div class="member femme">
+                                <div class="role">Arrière-Grand-Mère Pat. Mère</div>
+                                <div class="name">Ashley</div>
+                            </div>
+                        </div>
+
+                        <!-- Lignée Djougue Tasa'a & Metsofouet Suzane (Côté Maternel / Grand-mère Marie) -->
+                        <div class="couple-box">
+                            <div class="member homme">
+                                <div class="role">Arrière-Grand-Père Mat. Mère</div>
+                                <div class="name">Djougue Tasa'a</div>
+                            </div>
+                            <div class="member femme">
+                                <div class="role">Arrière-Grand-Mère Mat. Mère</div>
+                                <div class="name">Metsofouet Suzane</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAGE 2 : GRANDS-PARENTS -->
+                    <ul>
+                        <li>
+                            <div style="display: flex; gap: 150px; justify-content: center;">
+                                <!-- Grands-Parents Paternels -->
+                                <div class="couple-box">
+                                    <div class="member homme">
+                                        <div class="role">Grand-Père Paternel</div>
+                                        <div class="name">Assonfack Michel</div>
+                                    </div>
+                                    <div class="member femme">
+                                        <div class="role">Grand-Mère Paternelle</div>
+                                        <div class="name">Pagui Hélène</div>
+                                    </div>
+                                </div>
+
+                                <!-- Grands-Parents Maternels -->
+                                <div class="couple-box">
+                                    <div class="member homme">
+                                        <div class="role">Grand-Père Maternel</div>
+                                        <div class="name">Demeze Bernard</div>
+                                    </div>
+                                    <div class="member femme">
+                                        <div class="role">Grand-Mère Maternelle</div>
+                                        <div class="name">Ngouné Marie</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ÉTAGE 3 : PARENTS -->
+                            <ul>
+                                <li>
+                                    <div class="couple-box">
+                                        <div class="member homme">
+                                            <div class="role">Père</div>
+                                            <div class="name">Takadjeu Assonfack Alex Simon</div>
+                                        </div>
+                                        <div class="member femme">
+                                            <div class="role">Mère</div>
+                                            <div class="name">Demeze Metsofouet Marthe Lisette</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ÉTAGE 4 : ENFANTS -->
+                                    <ul>
+                                        <li>
+                                            <div style="display: flex; gap: 20px; justify-content: center;">
+                                                <div class="member homme">
+                                                    <div class="role">Enfant 1</div>
+                                                    <div class="name">Emctheu Aristide Bienvenu</div>
+                                                </div>
+                                                <div class="member homme">
+                                                    <div class="role">Enfant 2</div>
+                                                    <div class="name">Assondonhou Landry Asthin</div>
+                                                </div>
+                                                <div class="member homme">
+                                                    <div class="role">Enfant 3</div>
+                                                    <div class="name">Demafon Ephraim</div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Légende -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #3498db;"></div>
+            <span>Hommes / Lignée Masculine</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #e74c3c;"></div>
+            <span>Femmes / Lignée Féminine</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #95a5a6;"></div>
+            <span>Données Manquantes / Inconnu</span>
+        </div>
+    </div>
+
+</body>
+</html>
