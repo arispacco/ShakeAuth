@@ -54,8 +54,8 @@ class MainActivity : ReactActivity(), SensorEventListener {
     if (gForce > (SHAKE_THRESHOLD / 9.81f) && now - lastShakeTime > MIN_TIME_BETWEEN_SHAKES) {
       lastShakeTime = now
       
-      // Using reactHost to get the context safely
-      reactHost.getCurrentReactContext()
+      // Using reactInstanceManager to get the context safely
+      reactInstanceManager.currentReactContext
         ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
         ?.emit("ShakeEvent", null)
     }

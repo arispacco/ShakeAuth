@@ -21,7 +21,7 @@ class MainApplication : Application(), ReactApplication {
               // add(MyReactNativePackage())
             }
 
-        override fun getJSMainModule(): String = "index"
+        override fun getJSMainModulePath(): String = "index"
 
         override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
