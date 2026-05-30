@@ -53,11 +53,14 @@ class MainActivity : ReactActivity(), SensorEventListener {
     val now = System.currentTimeMillis()
     if (gForce > (SHAKE_THRESHOLD / 9.81f) && now - lastShakeTime > MIN_TIME_BETWEEN_SHAKES) {
       lastShakeTime = now
-      
-      // Using reactInstanceManager to get the context safely
-      reactInstanceManager.currentReactContext
-        ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-        ?.emit("ShakeEvent", null)
+
+      try {
+        reactInstanceManager.currentReactContext
+          ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+          ?.emit("ShakeEvent", null)
+      } catch (e: IllegalStateException) {
+        // ReactInstanceManager not yet initialized
+      }
     }
   }
 
