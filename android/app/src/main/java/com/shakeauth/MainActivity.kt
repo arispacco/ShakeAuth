@@ -55,11 +55,13 @@ class MainActivity : ReactActivity(), SensorEventListener {
       lastShakeTime = now
 
       try {
-        reactInstanceManager.currentReactContext
-          ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-          ?.emit("ShakeEvent", null)
-      } catch (e: IllegalStateException) {
-        // ReactInstanceManager not yet initialized
+        val reactApp = applicationContext as com.facebook.react.ReactApplication
+        val reactContext = reactApp.reactHost?.currentReactContext
+          ?: reactApp.reactNativeHost.reactInstanceManager.currentReactContext
+          
+        reactContext?.emitDeviceEvent("ShakeEvent", null)
+      } catch (e: Exception) {
+        // Ignored
       }
     }
   }
